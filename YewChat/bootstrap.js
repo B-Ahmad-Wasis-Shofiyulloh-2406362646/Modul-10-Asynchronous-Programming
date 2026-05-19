@@ -1,3 +1,5 @@
 import('./pkg').then((module) => {
-    module.run_app();
+    module.default().then(() => {
+        module.run_app();
+    });
 });
