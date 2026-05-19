@@ -1,4 +1,4 @@
-use futures_util::sink::SinkExt;
+﻿use futures_util::sink::SinkExt;
 use futures_util::stream::StreamExt;
 use std::error::Error;
 use std::net::SocketAddr;
@@ -25,7 +25,7 @@ async fn handle_connection(
                 if let Some(text) = msg.as_text() {
                     println!("client {addr:?} sent: {text}");
 
-                    let _ = bcast_tx.send(format!("server: [{addr}] {text}"));
+                    let _ = bcast_tx.send(format!("{addr}: {text}"));
                 }
             }
             msg = bcast_rx.recv() => {

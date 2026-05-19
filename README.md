@@ -44,3 +44,14 @@ Program tetap berjalan dengan benar setelah port diganti ke `8080` karena logika
 
 
 </details>
+
+<details>
+<summary>Experiment 2.3</summary>
+
+![alt text](assets/images/experiment-2.3.png)
+
+Pada percobaan ini, saya menambahkan informasi pengirim ke setiap pesan yang diterima client. Karena aplikasi ini belum memiliki fitur nama pengguna, saya memakai alamat IP dan port sebagai identitas pengirim. Hasilnya, pesan yang tampil di client menjadi lebih jelas, misalnya `127.0.0.1:xxxxx: isi pesan`.
+
+Perubahan ini saya pilih agar client bisa langsung mengetahui pesan tersebut berasal dari koneksi mana, bukan hanya melihat isi pesannya saja. Selain itu, perubahan ini tetap sederhana dan sesuai dengan struktur program yang sudah ada, karena informasi alamat pengirim memang sudah tersedia dari `addr` pada sisi server.
+
+</details>
