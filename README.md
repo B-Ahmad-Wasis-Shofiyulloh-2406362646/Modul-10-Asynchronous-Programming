@@ -78,3 +78,28 @@ Saya menambahkan fitur interaksi chat yang lebih kaya di YewChat dengan perubaha
 Dengan perubahan ini, UI chat jadi lebih interaktif, dan semua aksi utama (pesan, reaction, thread reply) terlihat sinkron pada banyak client.
 
 </details>
+
+<details>
+<summary>Bonus</summary>
+
+Pada bonus ini saya memodifikasi server di Tutorial 2 (`chat-async`) agar dapat melayani `YewChat` (Tutorial 3) yang menggunakan payload JSON yang di-serialize sebagai text frame WebSocket. Inti perubahan yang saya lakukan:
+
+- Menambahkan dependensi `serde` dan `serde_json` di `chat-async/Cargo.toml` untuk parsing dan pembuatan JSON.
+- Mengubah `chat-async/src/bin/server.rs` sehingga server:
+	- Menerima pesan teks WebSocket dan mengurai JSON luar yang memiliki field `messageType`, `data`, dan `dataArray`.
+	- Menangani tipe pesan `register`, `message`, `reaction`, dan `thread` sesuai format YewChat.
+	- Menyimpan peta pengguna (username) dan counter `next_message_id` di sisi server, lalu menyisipkan `id` pada message yang dibroadcast.
+	- Mengirimkan kembali (broadcast) pesan dalam bentuk JSON dengan struktur yang sama seperti yang diharapkan client, sehingga tidak perlu mengubah kode client.
+
+Mengapa perubahan ini berhasil:
+
+- Kompatibilitas: server baru tetap mengirim/ menerima JSON dengan struktur yang sama seperti implementasi Node sebelumnya, sehingga `YewChat` tidak perlu dimodifikasi.
+- Konsistensi: `id` pesan dihasilkan oleh server, sehingga reaction dan balasan thread dapat direferensikan dengan stabil oleh semua client.
+- Stabilitas dan performa: implementasi Rust menggunakan `tokio` dan tipe statik Rust, yang membantu mengurangi kelas bug concurrency dan memudahkan distribusi sebagai single binary.
+
+Pendapat saya (pilihan antara JavaScript/Node vs Rust):
+
+- Untuk prototyping dan pengembangan cepat saya memilih JavaScript/Node karena siklus edit–run yang sangat cepat dan kemudahan eksperimen.
+- Untuk deployment produksi, saya lebih memilih Rust karena tipe statis, performa lebih baik pada beban tinggi, dan distribusi sebagai satu binary tanpa runtime tambahan.
+
+</details>
