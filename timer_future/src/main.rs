@@ -122,6 +122,8 @@ fn main() {
         println!("Wasis's Komputer: Done!");
     });
 
+    println!("Wasis's Komputer: Hey hey!");
+
     drop(spawner);
 
     executor.run();
