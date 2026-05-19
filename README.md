@@ -32,3 +32,15 @@ Untuk menjalankan program ini, buka dua atau lebih terminal di folder `chat-asyn
 Saat kita mengetik teks di salah satu client lalu menekan Enter, pesan tersebut akan dikirim ke server. Server kemudian mencatat pesan itu di terminal server dan mengirim ulang pesan ke semua client dengan awalan seperti `server: [alamat_client]`. Karena itu, semua client yang sedang tersambung akan melihat pesan yang sama muncul di layar mereka, termasuk client yang mengirim pesan.
 
 </details>
+
+<details>
+<summary>Experiment 2.2</summary>
+
+![alt text](assets/images/experiment-2.2.png)
+
+Untuk mengubah port menjadi `8080`, saya harus mengubah dua sisi koneksi, yaitu server dan client. Di sisi server, port ditentukan saat `TcpListener::bind("127.0.0.1:8080")` dijalankan di [src/bin/server.rs](chat-async/src/bin/server.rs). Di sisi client, alamat tujuan juga harus sama, yaitu pada `ClientBuilder::from_uri(Uri::from_static("ws://127.0.0.1:8080"))` di [src/bin/client.rs](chat-async/src/bin/client.rs). Jika hanya salah satu yang diubah, client dan server tidak akan saling terhubung karena mereka harus mendengarkan dan terhubung ke port yang sama.
+
+Program tetap berjalan dengan benar setelah port diganti ke `8080` karena logika websocket-nya tidak berubah, hanya alamat koneksinya saja. Protokol websocket juga tetap sama, dan didefinisikan pada skema URL `ws://` di sisi client. Sisi server menggunakan `tokio_websockets::ServerBuilder` untuk menerima koneksi websocket dari socket TCP, jadi keduanya tetap memakai protokol websocket yang sama melalui crate `tokio-websockets`.
+
+
+</details>
