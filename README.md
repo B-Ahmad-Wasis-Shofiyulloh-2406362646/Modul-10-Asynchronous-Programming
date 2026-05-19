@@ -55,3 +55,10 @@ Pada percobaan ini, saya menambahkan informasi pengirim ke setiap pesan yang dit
 Perubahan ini saya pilih agar client bisa langsung mengetahui pesan tersebut berasal dari koneksi mana, bukan hanya melihat isi pesannya saja. Selain itu, perubahan ini tetap sederhana dan sesuai dengan struktur program yang sudah ada, karena informasi alamat pengirim memang sudah tersedia dari `addr` pada sisi server.
 
 </details>
+
+<details>
+<summary>Experiment 3.1</summary>
+
+![alt text](assets/images/experiment-3.1.png)
+
+</details>
