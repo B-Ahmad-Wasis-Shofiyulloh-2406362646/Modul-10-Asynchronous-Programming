@@ -62,3 +62,19 @@ Perubahan ini saya pilih agar client bisa langsung mengetahui pesan tersebut ber
 ![alt text](assets/images/experiment-3.1.png)
 
 </details>
+
+<details>
+<summary>Experiment 3.2</summary>
+
+![alt text](assets/images/experiment-3.2.png)
+
+Saya menambahkan fitur interaksi chat yang lebih kaya di YewChat dengan perubahan berikut:
+
+1. Menambahkan **emoji reactions** per pesan (👍 ❤️ 😂 🎉 🤔).
+2. Menambahkan **thread panel** di sisi kanan, sehingga setiap pesan bisa dipilih lalu dibalas dalam thread.
+3. Reactions dan balasan thread awalnya lokal di client, lalu saya ubah agar **tersinkron antar user** lewat WebSocket.
+4. Menambahkan dukungan event baru pada protokol: `reaction` dan `thread`, termasuk `message id` dari server agar target reaction/thread konsisten di semua client.
+
+Dengan perubahan ini, UI chat jadi lebih interaktif, dan semua aksi utama (pesan, reaction, thread reply) terlihat sinkron pada banyak client.
+
+</details>

@@ -3,17 +3,28 @@ import WebSocket, { WebSocketServer } from 'ws';
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 interface User {
     ws: WebSocket;
-    nick: String;
+    nick: string;
     isAlive: boolean;
 }
 
-interface Message {
-    messageType: String;
-    data: String;
-    dataArray: String[];
+interface IncomingMessage {
+    messageType: string;
+    data?: string;
+    dataArray?: string[];
+}
+
+interface ReactionData {
+    messageId: number;
+    emoji: string;
+}
+
+interface ThreadData {
+    messageId: number;
+    message: string;
 }
 
 let users: User[] = [];
+let nextMessageId = 1;
 
 console.log(`Listening on port ${PORT}`);
 const wss = new WebSocketServer({ port: PORT });
@@ -24,26 +35,69 @@ wss.on('connection', (ws: WebSocket) => {
     ws.on('message', (data) => {
         const raw_data = data.toString();
         try {
-            const parsed_data: Message = JSON.parse(raw_data);
+            const parsed_data: IncomingMessage = JSON.parse(raw_data);
             switch (parsed_data.messageType) {
                 case 'register':
-                    users.push({ ws, nick: parsed_data.data, isAlive: true });
+                    users.push({ ws, nick: parsed_data.data ?? '', isAlive: true });
                     broadcast(JSON.stringify({ messageType: 'users', dataArray: users.map((u) => u.nick) }));
                     break;
-                case 'message':
+                case 'message': {
                     const sender = users.find((u) => u.ws === ws);
                     if (sender) {
+                        const id = nextMessageId++;
                         broadcast(
                             JSON.stringify({
                                 messageType: 'message',
                                 data: JSON.stringify({
+                                    id,
                                     from: sender.nick,
-                                    message: parsed_data.data,
+                                    message: parsed_data.data ?? '',
                                     time: Date.now(),
                                 }),
                             })
                         );
                     }
+                    break;
+                }
+                case 'reaction': {
+                    const sender = users.find((u) => u.ws === ws);
+                    if (!sender || !parsed_data.data) {
+                        break;
+                    }
+
+                    const reaction_data: ReactionData = JSON.parse(parsed_data.data);
+                    broadcast(
+                        JSON.stringify({
+                            messageType: 'reaction',
+                            data: JSON.stringify({
+                                messageId: reaction_data.messageId,
+                                emoji: reaction_data.emoji,
+                                from: sender.nick,
+                            }),
+                        })
+                    );
+                    break;
+                }
+                case 'thread': {
+                    const sender = users.find((u) => u.ws === ws);
+                    if (!sender || !parsed_data.data) {
+                        break;
+                    }
+
+                    const thread_data: ThreadData = JSON.parse(parsed_data.data);
+                    broadcast(
+                        JSON.stringify({
+                            messageType: 'thread',
+                            data: JSON.stringify({
+                                messageId: thread_data.messageId,
+                                from: sender.nick,
+                                message: thread_data.message,
+                                time: Date.now(),
+                            }),
+                        })
+                    );
+                    break;
+                }
             }
         } catch (e) {
             console.log('Error in message', e);
